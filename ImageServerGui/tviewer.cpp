@@ -2,6 +2,7 @@
 #include "ui_tviewer.h"
 #include <Windows.h>
 #include <QMessageBox>
+#include <iostream>
 
 tviewer::tviewer(QWidget *parent) :
     QDialog(parent),
@@ -200,13 +201,13 @@ void tviewer::on_pushButton_Update_clicked()
         ui->checkBoxRU->setChecked(false);
         char wBuff[500];
         SHGetSpecialFolderPathA(0, wBuff, CSIDL_PERSONAL, true);
-        QString way;
+        std::string way;
         way += wBuff;
         way += "\\imageLog\\";
-        way += ui->listWidget->currentItem()->text();
+        way += ui->listWidget->currentItem()->text().toStdString();
         way += "\\Buttons.txt";
 
-        HANDLE hFile = CreateFileA(way.toLocal8Bit(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+        HANDLE hFile = CreateFileA(&way[0], GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
         if(hFile != INVALID_HANDLE_VALUE)
         {
             LARGE_INTEGER size = { 0 };
@@ -215,9 +216,15 @@ void tviewer::on_pushButton_Update_clicked()
             char *buf = new char[size.QuadPart];
             ReadFile(hFile, buf, size.QuadPart, NULL, NULL);
             data = buf;
+            ui->textBrowser->clear();
             ui->textBrowser->append(data);
-            CloseHandle(hFile);
+
+            QTextCursor cursor = ui->textBrowser->textCursor();
+            cursor.movePosition(QTextCursor::End);
+            ui->textBrowser->setTextCursor(cursor);
+
             delete[] buf;
         }
+        CloseHandle(hFile);
     }
 }

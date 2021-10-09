@@ -5,6 +5,7 @@
 #include <iostream>
 #include <QSize>
 #include<QDebug>
+#include <iostream>
 
 HANDLE hFile;
 

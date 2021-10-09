@@ -47,13 +47,13 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-win32: LIBS += -L$$PWD/../ImageServerGuiLib/x64/Release/ -lImageServerLib
+win32: LIBS += -L$$PWD/../ImageService/x64/Release/ -lImageServerLib
 
-INCLUDEPATH += $$PWD/../ImageServerGuiLib/ImageServerLib
-DEPENDPATH += $$PWD/../ImageServerGuiLib/ImageServerLib
+INCLUDEPATH += $$PWD/../ImageService/ImageServerLib
+DEPENDPATH += $$PWD/../ImageService/ImageServerLib
 
-win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../ImageServerGuiLib/x64/Release/ImageServerLib.lib
-else:win32-g++: PRE_TARGETDEPS += $$PWD/../ImageServerGuiLib/x64/Release/libImageServerLib.a
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../ImageService/x64/Release/ImageServerLib.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/../ImageService/x64/Release/libImageServerLib.a
 
 RESOURCES += \
     res.qrc
