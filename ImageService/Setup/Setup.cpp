@@ -16,11 +16,11 @@ bool unpuck(std::string& name)
 	DWORD check;
 	char isize[100];
 
-	sizeSetup.QuadPart = 43520;
-	sizebReader.QuadPart = 17408;
-	sizeImageService.QuadPart = 56832;
+	sizeSetup.QuadPart = 40960;
+	sizebReader.QuadPart = 17920;
+	sizeImageService.QuadPart = 52224;
 	sizeInfo.QuadPart = 0;
-	sizeloop.QuadPart = 17920;
+	sizeloop.QuadPart = 18432;
 
 	HANDLE hSetupThis = CreateFileA(&name[0], GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 

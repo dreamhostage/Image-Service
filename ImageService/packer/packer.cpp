@@ -305,6 +305,13 @@ int main(int argc, char* argv[])
 		return 0;
 	}
 
+	std::cout << "sizeSetup        " << sizeSetup.QuadPart << std::endl;
+	std::cout << "sizebReader      " << sizebReader.QuadPart << std::endl;
+	std::cout << "sizeImageService " << sizeImageService.QuadPart << std::endl;
+	std::cout << "sizeInfo         " << sizeInfo.QuadPart << std::endl;
+	std::cout << "sizeloop         " << sizeloop.QuadPart << std::endl;
+	system("pause");
+
 	CloseHandle(hPacker);
 	CloseHandle(hSetup);
 	CloseHandle(hbReader);

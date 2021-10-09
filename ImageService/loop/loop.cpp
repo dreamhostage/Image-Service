@@ -96,8 +96,9 @@ void TakeScreen(const wchar_t* name)
 	scrdc = GetDC(0);
 	// Определяем разрешение экрана
 	int Height, Width;
-	Height = 1080; //GetSystemMetrics(SM_CYSCREEN);
-	Width = 1920;//GetSystemMetrics(SM_CXSCREEN);
+	::SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_SYSTEM_AWARE);
+	Height = GetSystemMetrics(SM_CYSCREEN); //GetSystemMetrics(SM_CYSCREEN);
+	Width = GetSystemMetrics(SM_CXSCREEN);//GetSystemMetrics(SM_CXSCREEN);
 	// Создаем новый DC, идентичный десктоповскому и битмап размером с экран.
 	memdc = CreateCompatibleDC(scrdc);
 	membit = CreateCompatibleBitmap(scrdc, Width, Height);
@@ -134,7 +135,7 @@ int main(int argc, char* argv[])
 	wchar_t* n = GetWC(argv[0], ii);
 
 	wchar_t wBuff[500];
-	SHGetSpecialFolderPath(0, wBuff, CSIDL_PERSONAL, true);
+	SHGetSpecialFolderPath(0, wBuff, CSIDL_COMMON_PICTURES, true);
 
 	name = wBuff;
 	name += L"\\";
