@@ -106,13 +106,11 @@ void ImageServer::getImage(std::string& pc_name, bool show)
 
 	send(s, cstart, 50, 0);
 
-	while (true)
-	{
-		if (!recvLoop(50, s))
-			return;
-		if (!strcmp(cstart, message))
-			break;
-	}
+	if (!recvLoop(50, s))
+		return;
+
+	if (strcmp(cstart, message))
+		return;
 
 	if (!recvLoop(50, s))
 		return;

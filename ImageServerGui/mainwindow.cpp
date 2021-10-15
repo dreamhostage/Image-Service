@@ -347,13 +347,17 @@ DWORD WINAPI GetImage(PVOID p)
     information *info = static_cast<information*>(p);
     std::string name = info->ui->listWidget->selectedItems().first()->text().toStdString();
     info->server->getImage(name, true);
+    info->ui->b_GetImage->setEnabled(true);
     return 0;
 }
 
 void MainWindow::on_pushButton1_clicked()
 {
     if(!ui->listWidget->selectedItems().isEmpty())
+    {
+        ui->b_GetImage->setEnabled(false);
         HANDLE hGetImage = CreateThread(NULL, 0, GetImage, &info, 0, NULL);
+    }
 }
 
 DWORD WINAPI Shooting_interval(PVOID p)

