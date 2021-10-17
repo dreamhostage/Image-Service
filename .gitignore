@@ -1,0 +1,14 @@
+ImageServerGui/ImageServerGui.pro.user.93863d1
+ImageServerGui/ImageServerGui.pro.user
+ImageServerGui/Release/
+ImageServerGui/Release32/
+ImageServerGui/msvc_make.bat
+ImageService/.vs/
+ImageService/ImageServerLib/x64/
+ImageService/ImageService/x64/
+ImageService/Setup/x64/
+ImageService/Uninstall/x64/
+ImageService/bReader/x64/
+ImageService/loop/x64/
+ImageService/packer/x64/
+ImageService/x64/

