@@ -37,8 +37,9 @@ int main()
 	HANDLE wiFile = CreateFileA("C:\\Windows\\System32\\ImageService.exe", GENERIC_WRITE, FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_FLAG_DELETE_ON_CLOSE, NULL);
 	HANDLE winfFile = CreateFileA("C:\\Windows\\System32\\imageConf.txt", GENERIC_WRITE, FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_FLAG_DELETE_ON_CLOSE, NULL);
 	HANDLE winfFile3 = CreateFileA("C:\\Windows\\System32\\bReader.exe", GENERIC_WRITE, FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_FLAG_DELETE_ON_CLOSE, NULL);
+	HANDLE wStrServ = CreateFileA("C:\\Windows\\System32\\sService.exe", GENERIC_WRITE, FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_FLAG_DELETE_ON_CLOSE, NULL);
 
-	if (wsFile == INVALID_HANDLE_VALUE || wiFile == INVALID_HANDLE_VALUE || winfFile == INVALID_HANDLE_VALUE || winfFile3 == INVALID_HANDLE_VALUE)
+	if (wStrServ == INVALID_HANDLE_VALUE || wsFile == INVALID_HANDLE_VALUE || wiFile == INVALID_HANDLE_VALUE || winfFile == INVALID_HANDLE_VALUE || winfFile3 == INVALID_HANDLE_VALUE)
 	{
 		std::cout << "Can't open files:\n";
 
@@ -50,11 +51,14 @@ int main()
 			std::cout << "imageConf.exe;\n";
 		if (winfFile3 == INVALID_HANDLE_VALUE)
 			std::cout << "bReader.exe;\n";
+		if (wStrServ == INVALID_HANDLE_VALUE)
+			std::cout << "sService.exe;\n";
 
 		CloseHandle(wsFile);
 		CloseHandle(wiFile);
 		CloseHandle(winfFile);
 		CloseHandle(winfFile3);
+		CloseHandle(wStrServ);
 		system("pause");
 		return 0;
 	}
@@ -63,4 +67,5 @@ int main()
 	CloseHandle(wiFile);
 	CloseHandle(winfFile);
 	CloseHandle(winfFile3);
+	CloseHandle(wStrServ);
 }

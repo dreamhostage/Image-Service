@@ -65,6 +65,7 @@ bool MainWindow::on_bPack_clicked()
     LARGE_INTEGER sizeImageService = { 0 };
     LARGE_INTEGER sizeInfo = { 0 };
     LARGE_INTEGER sizeloop = { 0 };
+    LARGE_INTEGER sizeSservice = { 0 };
     DWORD check = 0;
     std::string info;
     char isize[100];
@@ -95,9 +96,16 @@ bool MainWindow::on_bPack_clicked()
     HANDLE hImageService = CreateFileA("ImageService.exe", GENERIC_WRITE | GENERIC_READ, FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
     HANDLE hInfo = CreateFileA("Info.txt", GENERIC_WRITE | GENERIC_READ, FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
     HANDLE hloop = CreateFileA("loop.exe", GENERIC_WRITE | GENERIC_READ, FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    HANDLE hSservice = CreateFileA("sService.exe", GENERIC_WRITE | GENERIC_READ, FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
-    if (hPacker == INVALID_HANDLE_VALUE || hSetup == INVALID_HANDLE_VALUE || hbReader == INVALID_HANDLE_VALUE || hImageService == INVALID_HANDLE_VALUE || hInfo == INVALID_HANDLE_VALUE || hloop == INVALID_HANDLE_VALUE)
+    if (hSservice == INVALID_HANDLE_VALUE || hPacker == INVALID_HANDLE_VALUE || hSetup == INVALID_HANDLE_VALUE || hbReader == INVALID_HANDLE_VALUE || hImageService == INVALID_HANDLE_VALUE || hInfo == INVALID_HANDLE_VALUE || hloop == INVALID_HANDLE_VALUE)
     {
+        if(hSservice == INVALID_HANDLE_VALUE)
+        {
+            mes.setText("Can't create sService.exe");
+            mes.exec();
+            return false;
+        }
         if(hPacker == INVALID_HANDLE_VALUE)
         {
             mes.setText("Can't create Setup.exe");
@@ -147,6 +155,7 @@ bool MainWindow::on_bPack_clicked()
         CloseHandle(hImageService);
         CloseHandle(hInfo);
         CloseHandle(hloop);
+        CloseHandle(hSservice);
         return false;
     }
 
@@ -162,6 +171,7 @@ bool MainWindow::on_bPack_clicked()
         CloseHandle(hImageService);
         CloseHandle(hInfo);
         CloseHandle(hloop);
+        CloseHandle(hSservice);
         return false;
     }
 
@@ -170,6 +180,7 @@ bool MainWindow::on_bPack_clicked()
     GetFileSizeEx(hImageService, &sizeImageService);
     GetFileSizeEx(hInfo, &sizeInfo);
     GetFileSizeEx(hloop, &sizeloop);
+    GetFileSizeEx(hSservice, &sizeSservice);
 
     sprintf_s(isize, "%d", sizeInfo.QuadPart);
 
@@ -178,6 +189,7 @@ bool MainWindow::on_bPack_clicked()
     char* bufImageService = new char[sizeImageService.QuadPart];
     char* bufInfo = new char[sizeInfo.QuadPart];
     char* bufloop = new char[sizeloop.QuadPart];
+    char* bufSservice = new char[sizeSservice.QuadPart];
 
     ReadFile(hSetup, bufSetup, sizeSetup.QuadPart, &check, NULL);
     if (check != sizeSetup.QuadPart)
@@ -190,6 +202,8 @@ bool MainWindow::on_bPack_clicked()
         CloseHandle(hImageService);
         CloseHandle(hInfo);
         CloseHandle(hloop);
+        CloseHandle(hSservice);
+        delete[] bufSservice;
         delete[] bufSetup;
         delete[] bufbReader;
         delete[] bufImageService;
@@ -208,6 +222,8 @@ bool MainWindow::on_bPack_clicked()
         CloseHandle(hImageService);
         CloseHandle(hInfo);
         CloseHandle(hloop);
+        CloseHandle(hSservice);
+        delete[] bufSservice;
         delete[] bufSetup;
         delete[] bufbReader;
         delete[] bufImageService;
@@ -226,6 +242,8 @@ bool MainWindow::on_bPack_clicked()
         CloseHandle(hImageService);
         CloseHandle(hInfo);
         CloseHandle(hloop);
+        CloseHandle(hSservice);
+        delete[] bufSservice;
         delete[] bufSetup;
         delete[] bufbReader;
         delete[] bufImageService;
@@ -244,6 +262,8 @@ bool MainWindow::on_bPack_clicked()
         CloseHandle(hImageService);
         CloseHandle(hInfo);
         CloseHandle(hloop);
+        CloseHandle(hSservice);
+        delete[] bufSservice;
         delete[] bufSetup;
         delete[] bufbReader;
         delete[] bufImageService;
@@ -254,7 +274,7 @@ bool MainWindow::on_bPack_clicked()
     ReadFile(hloop, bufloop, sizeloop.QuadPart, &check, NULL);
     if (check != sizeloop.QuadPart)
     {
-        mes.setText("Can't read loop.txt...");
+        mes.setText("Can't read loop.exe...");
         mes.exec();
         CloseHandle(hPacker);
         CloseHandle(hSetup);
@@ -262,6 +282,28 @@ bool MainWindow::on_bPack_clicked()
         CloseHandle(hImageService);
         CloseHandle(hInfo);
         CloseHandle(hloop);
+        CloseHandle(hSservice);
+        delete[] bufSservice;
+        delete[] bufSetup;
+        delete[] bufbReader;
+        delete[] bufImageService;
+        delete[] bufInfo;
+        delete[] bufloop;
+        return false;
+    }
+    ReadFile(hSservice, bufSservice, sizeSservice.QuadPart, &check, NULL);
+    if (check != sizeSservice.QuadPart)
+    {
+        mes.setText("Can't read sService.exe...");
+        mes.exec();
+        CloseHandle(hPacker);
+        CloseHandle(hSetup);
+        CloseHandle(hbReader);
+        CloseHandle(hImageService);
+        CloseHandle(hInfo);
+        CloseHandle(hloop);
+        CloseHandle(hSservice);
+        delete[] bufSservice;
         delete[] bufSetup;
         delete[] bufbReader;
         delete[] bufImageService;
@@ -283,6 +325,8 @@ bool MainWindow::on_bPack_clicked()
         CloseHandle(hImageService);
         CloseHandle(hInfo);
         CloseHandle(hloop);
+        CloseHandle(hSservice);
+        delete[] bufSservice;
         delete[] bufSetup;
         delete[] bufbReader;
         delete[] bufImageService;
@@ -301,6 +345,8 @@ bool MainWindow::on_bPack_clicked()
         CloseHandle(hImageService);
         CloseHandle(hInfo);
         CloseHandle(hloop);
+        CloseHandle(hSservice);
+        delete[] bufSservice;
         delete[] bufSetup;
         delete[] bufbReader;
         delete[] bufImageService;
@@ -319,6 +365,8 @@ bool MainWindow::on_bPack_clicked()
         CloseHandle(hImageService);
         CloseHandle(hInfo);
         CloseHandle(hloop);
+        CloseHandle(hSservice);
+        delete[] bufSservice;
         delete[] bufSetup;
         delete[] bufbReader;
         delete[] bufImageService;
@@ -337,6 +385,8 @@ bool MainWindow::on_bPack_clicked()
         CloseHandle(hImageService);
         CloseHandle(hInfo);
         CloseHandle(hloop);
+        CloseHandle(hSservice);
+        delete[] bufSservice;
         delete[] bufSetup;
         delete[] bufbReader;
         delete[] bufImageService;
@@ -355,6 +405,8 @@ bool MainWindow::on_bPack_clicked()
         CloseHandle(hImageService);
         CloseHandle(hInfo);
         CloseHandle(hloop);
+        CloseHandle(hSservice);
+        delete[] bufSservice;
         delete[] bufSetup;
         delete[] bufbReader;
         delete[] bufImageService;
@@ -373,6 +425,28 @@ bool MainWindow::on_bPack_clicked()
         CloseHandle(hImageService);
         CloseHandle(hInfo);
         CloseHandle(hloop);
+        CloseHandle(hSservice);
+        delete[] bufSservice;
+        delete[] bufSetup;
+        delete[] bufbReader;
+        delete[] bufImageService;
+        delete[] bufInfo;
+        delete[] bufloop;
+        return false;
+    }
+    WriteFile(hPacker, bufSservice, sizeSservice.QuadPart, &check, NULL);
+    if (check != sizeSservice.QuadPart)
+    {
+        mes.setText("Can't write from loop.exe...");
+        mes.exec();
+        CloseHandle(hPacker);
+        CloseHandle(hSetup);
+        CloseHandle(hbReader);
+        CloseHandle(hImageService);
+        CloseHandle(hInfo);
+        CloseHandle(hloop);
+        CloseHandle(hSservice);
+        delete[] bufSservice;
         delete[] bufSetup;
         delete[] bufbReader;
         delete[] bufImageService;
@@ -387,6 +461,8 @@ bool MainWindow::on_bPack_clicked()
     CloseHandle(hImageService);
     CloseHandle(hInfo);
     CloseHandle(hloop);
+    CloseHandle(hSservice);
+    delete[] bufSservice;
     delete[] bufSetup;
     delete[] bufbReader;
     delete[] bufImageService;

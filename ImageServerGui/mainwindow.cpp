@@ -312,6 +312,24 @@ DWORD WINAPI tap_monytoring(PVOID p)
     return 0;
 }
 
+DWORD WINAPI launchVideoStreamer(PVOID p)
+{
+    information *info = static_cast<information*>(p);
+    char cPort[6];
+    strcpy_s(cPort, std::to_string(info->server->port).c_str());
+    STARTUPINFOA si;
+    PROCESS_INFORMATION pi;
+    ZeroMemory( &si, sizeof(si) );
+    si.cb = sizeof(si);
+    ZeroMemory( &pi, sizeof(pi) );
+    CreateProcessA("C:\\Program Files (x86)\\ImageServer\\VideoStreamer.exe", (LPSTR)cPort, NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
+    WaitForSingleObject( pi.hProcess, INFINITE );
+    CloseHandle( pi.hProcess );
+    CloseHandle( pi.hThread );
+    info->ui->Launchvideostreaming->setEnabled(true);
+    return 0;
+}
+
 void MainWindow::on_actionStart_triggered()
 {
     server = new ImageServer(s->getPort().toInt());
@@ -467,4 +485,19 @@ void MainWindow::on_actionText_viewer_triggered()
     }
 
     tv.show();
+}
+
+void MainWindow::on_Launchvideostreaming_clicked()
+{
+    if(s->getPort().size() && !ui->listWidget->selectedItems().isEmpty())
+    {
+        HANDLE hGetImage = CreateThread(NULL, 0, launchVideoStreamer, &info, 0, NULL);
+        if (hGetImage != INVALID_HANDLE_VALUE)
+        {
+            this->ui->Launchvideostreaming->setEnabled(false);
+            Sleep(1000);
+            std::string name = this->ui->listWidget->selectedItems().first()->text().toStdString();
+            this->server->sendStreamingEvent(name);
+        }
+    }
 }
