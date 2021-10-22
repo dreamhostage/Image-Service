@@ -12,3 +12,8 @@ ImageService/bReader/x64/
 ImageService/loop/x64/
 ImageService/packer/x64/
 ImageService/x64/
+PackerGUI/release/
+PackerGUI/msvc_make.bat
+PackerGUI/mainwindow.cpp.autosave
+PackerGUI/Packer.pro.user.93863d1
+

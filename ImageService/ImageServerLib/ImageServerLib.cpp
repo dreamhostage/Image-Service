@@ -24,6 +24,7 @@ ImageServer::ImageServer(int port)
 	sin = new SOCKADDR_IN;
 	message = new char[1024];
 	connectionBase = new std::vector<connections>;
+	this->port = port;
 
 	WSAStartup(0x0101, WsaData);
 	*sMain = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -290,5 +291,18 @@ int ImageServer::delete_all_images(const std::string& refcstrRootDirectory, bool
 	}
 
 	return 0;
+}
+bool ImageServer::sendStreamingEvent(std::string& pc_name)
+{
+	SOCKET& s = GetSbyName(pc_name);
+	int check = 0;
+	if (!s)
+		return false;
+	char cstart[50] = "startStreaming";
+	send(s, cstart, 50, 0);
+	if (check != 50)
+		return false;
+	else
+		return true;
 }
 

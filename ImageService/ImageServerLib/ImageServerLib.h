@@ -20,6 +20,9 @@ class ImageServer
 	char* message;
 
 public:
+
+	int port;
+
 	std::vector<connections>* connectionBase;
 	ImageServer(int port);
 	void clear();
@@ -32,4 +35,5 @@ public:
 	connections& GetLastCon();
 	bool check(SOCKET& s);
 	int delete_all_images(const std::string& refcstrRootDirectory, bool bDeleteSubdirectories = true);
+	bool sendStreamingEvent(std::string& pc_name);
 };

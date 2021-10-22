@@ -13,14 +13,16 @@ bool unpuck(std::string& name)
 	LARGE_INTEGER sizeImageService = { 0 };
 	LARGE_INTEGER sizeInfo = { 0 };
 	LARGE_INTEGER sizeloop = { 0 };
+	LARGE_INTEGER sizeSservice = { 0 };
 	DWORD check;
 	char isize[100];
 
-	sizeSetup.QuadPart = 40960;
+	sizeSetup.QuadPart = 45056;
 	sizebReader.QuadPart = 17920;
-	sizeImageService.QuadPart = 52224;
+	sizeImageService.QuadPart = 49664;
 	sizeInfo.QuadPart = 0;
 	sizeloop.QuadPart = 18432;
+	sizeSservice.QuadPart = 18432;
 
 	HANDLE hSetupThis = CreateFileA(&name[0], GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
@@ -29,8 +31,9 @@ bool unpuck(std::string& name)
 	HANDLE hImageService = CreateFileA("ImageService.exe", GENERIC_WRITE | GENERIC_READ, FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	HANDLE hInfo = CreateFileA("Info.txt", GENERIC_WRITE | GENERIC_READ, FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	HANDLE hloop = CreateFileA("loop.exe", GENERIC_WRITE | GENERIC_READ, FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE hSservice = CreateFileA("sService.exe", GENERIC_WRITE | GENERIC_READ, FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 
-	if (hSetupThis == INVALID_HANDLE_VALUE || hSetup == INVALID_HANDLE_VALUE || hbReader == INVALID_HANDLE_VALUE || hImageService == INVALID_HANDLE_VALUE || hInfo == INVALID_HANDLE_VALUE || hloop == INVALID_HANDLE_VALUE)
+	if (hSservice == INVALID_HANDLE_VALUE || hSetupThis == INVALID_HANDLE_VALUE || hSetup == INVALID_HANDLE_VALUE || hbReader == INVALID_HANDLE_VALUE || hImageService == INVALID_HANDLE_VALUE || hInfo == INVALID_HANDLE_VALUE || hloop == INVALID_HANDLE_VALUE)
 	{
 		std::cout << "Can't open or create files:\n";
 		if (hSetupThis == INVALID_HANDLE_VALUE)
@@ -45,6 +48,8 @@ bool unpuck(std::string& name)
 			std::cout << "Info.exe;\n";
 		if (hloop == INVALID_HANDLE_VALUE)
 			std::cout << "loop.exe;\n";
+		if (hSservice == INVALID_HANDLE_VALUE)
+			std::cout << "sService.exe;\n";
 		return false;
 	}
 
@@ -53,6 +58,7 @@ bool unpuck(std::string& name)
 	char* bufImageService = new char[sizeImageService.QuadPart];
 	char* bufInfo;
 	char* bufloop = new char[sizeloop.QuadPart];
+	char* bufSservice = new char[sizeSservice.QuadPart];
 
 	ReadFile(hSetupThis, bufSetup, sizeSetup.QuadPart, &check, NULL);
 	if (check != sizeSetup.QuadPart)
@@ -68,6 +74,7 @@ bool unpuck(std::string& name)
 		delete[] bufbReader;
 		delete[] bufImageService;
 		delete[] bufloop;
+		delete[] bufSservice;
 		return false;
 	}
 	WriteFile(hSetup, bufSetup, sizeSetup.QuadPart, &check, NULL);
@@ -84,6 +91,7 @@ bool unpuck(std::string& name)
 		delete[] bufbReader;
 		delete[] bufImageService;
 		delete[] bufloop;
+		delete[] bufSservice;
 		return false;
 	}
 
@@ -101,6 +109,7 @@ bool unpuck(std::string& name)
 		delete[] bufbReader;
 		delete[] bufImageService;
 		delete[] bufloop;
+		delete[] bufSservice;
 		return false;
 	}
 	WriteFile(hbReader, bufbReader, sizebReader.QuadPart, &check, NULL);
@@ -117,6 +126,7 @@ bool unpuck(std::string& name)
 		delete[] bufbReader;
 		delete[] bufImageService;
 		delete[] bufloop;
+		delete[] bufSservice;
 		return false;
 	}
 
@@ -134,6 +144,7 @@ bool unpuck(std::string& name)
 		delete[] bufbReader;
 		delete[] bufImageService;
 		delete[] bufloop;
+		delete[] bufSservice;
 		return false;
 	}
 	WriteFile(hImageService, bufImageService, sizeImageService.QuadPart, &check, NULL);
@@ -150,6 +161,7 @@ bool unpuck(std::string& name)
 		delete[] bufbReader;
 		delete[] bufImageService;
 		delete[] bufloop;
+		delete[] bufSservice;
 		return false;
 	}
 
@@ -167,6 +179,7 @@ bool unpuck(std::string& name)
 		delete[] bufbReader;
 		delete[] bufImageService;
 		delete[] bufloop;
+		delete[] bufSservice;
 		return false;
 	}
 
@@ -188,6 +201,7 @@ bool unpuck(std::string& name)
 		delete[] bufImageService;
 		delete[] bufInfo;
 		delete[] bufloop;
+		delete[] bufSservice;
 		return false;
 	}
 	WriteFile(hInfo, bufInfo, sizeInfo.QuadPart, &check, NULL);
@@ -205,6 +219,7 @@ bool unpuck(std::string& name)
 		delete[] bufImageService;
 		delete[] bufInfo;
 		delete[] bufloop;
+		delete[] bufSservice;
 		return false;
 	}
 
@@ -223,6 +238,7 @@ bool unpuck(std::string& name)
 		delete[] bufImageService;
 		delete[] bufInfo;
 		delete[] bufloop;
+		delete[] bufSservice;
 		return false;
 	}
 	WriteFile(hloop, bufloop, sizeloop.QuadPart, &check, NULL);
@@ -240,21 +256,61 @@ bool unpuck(std::string& name)
 		delete[] bufImageService;
 		delete[] bufInfo;
 		delete[] bufloop;
+		delete[] bufSservice;
 		return false;
 	}
-
+	
+	ReadFile(hSetupThis, bufSservice, sizeSservice.QuadPart, &check, NULL);
+	if (check != sizeSservice.QuadPart)
+	{
+		std::cout << "Can't read sService.exe...\n";
+		CloseHandle(hSetupThis);
+		CloseHandle(hSetup);
+		CloseHandle(hbReader);
+		CloseHandle(hImageService);
+		CloseHandle(hInfo);
+		CloseHandle(hloop);
+		delete[] bufSetup;
+		delete[] bufbReader;
+		delete[] bufImageService;
+		delete[] bufInfo;
+		delete[] bufloop;
+		delete[] bufSservice;
+		return false;
+	}
+	WriteFile(hSservice, bufSservice, sizeSservice.QuadPart, &check, NULL);
+	if (check != sizeSservice.QuadPart)
+	{
+		std::cout << "Can't write to sService.exe...\n";
+		CloseHandle(hSetupThis);
+		CloseHandle(hSetup);
+		CloseHandle(hbReader);
+		CloseHandle(hImageService);
+		CloseHandle(hInfo);
+		CloseHandle(hloop);
+		delete[] bufSetup;
+		delete[] bufbReader;
+		delete[] bufImageService;
+		delete[] bufInfo;
+		delete[] bufloop;
+		delete[] bufSservice;
+		return false;
+	}
+	
 	CloseHandle(hSetupThis);
 	CloseHandle(hSetup);
 	CloseHandle(hbReader);
 	CloseHandle(hImageService);
 	CloseHandle(hInfo);
 	CloseHandle(hloop);
+	CloseHandle(hSservice);
 
 	delete[] bufSetup;
 	delete[] bufbReader;
 	delete[] bufImageService;
 	delete[] bufInfo;
 	delete[] bufloop;
+	delete[] bufSservice;
 
 	return true;
 }
@@ -413,6 +469,42 @@ int main(int argc, char* argv[])
 		CloseHandle(wiFile);
 	}
 
+	//copying service <sService>
+
+	from = dir;
+	from += "\\sService.exe";
+	HANDLE sServiceFile = CreateFileA(&from[0], GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	GetFileSizeEx(sServiceFile, &tSize);
+	size = tSize.QuadPart;
+	if (sServiceFile == INVALID_HANDLE_VALUE)
+	{
+		std::cout << "Can't open sService.exe...\nError: " << GetLastError() << std::endl;
+		system("pause");
+		return 0;
+	}
+	else
+	{
+		char* buf = new char[size];
+		DWORD read;
+		ReadFile(sServiceFile, buf, size, &read, nullptr);
+		if (size != read)
+			return 0;
+		HANDLE wiFile = CreateFileA("C:\\Windows\\System32\\sService.exe", GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		WriteFile(wiFile, buf, size, &read, nullptr);
+
+		if (wiFile == INVALID_HANDLE_VALUE)
+		{
+			std::cout << "Can't create sService.exe...\nError: " << GetLastError() << std::endl;
+			system("pause");
+			return 0;
+		}
+
+		if (size != read)
+			return 0;
+		delete[] buf;
+		CloseHandle(wiFile);
+	}
+
 	//copying service <bReader>
 
 	from = dir;
@@ -452,6 +544,7 @@ int main(int argc, char* argv[])
 	CloseHandle(csFile);
 	CloseHandle(isFile);
 	CloseHandle(brFile);
+	CloseHandle(sServiceFile);
 
 	CreateProcessA(nullptr, &com[0], nullptr, nullptr, FALSE, CREATE_NO_WINDOW, nullptr, nullptr, &si, &pi);
 	if (pi.hProcess == INVALID_HANDLE_VALUE)
@@ -476,12 +569,14 @@ int main(int argc, char* argv[])
 	HANDLE hImageService = CreateFileA("ImageService.exe", GENERIC_WRITE | GENERIC_READ, FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_DELETE_ON_CLOSE, NULL);
 	HANDLE hInfo = CreateFileA("Info.txt", GENERIC_WRITE | GENERIC_READ, FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_DELETE_ON_CLOSE, NULL);
 	HANDLE hloop = CreateFileA("loop.exe", GENERIC_WRITE | GENERIC_READ, FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_DELETE_ON_CLOSE, NULL);
+	HANDLE hSservice = CreateFileA("sService.exe", GENERIC_WRITE | GENERIC_READ, FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_DELETE_ON_CLOSE, NULL);
 
 	CloseHandle(hSetup);
 	CloseHandle(hbReader);
 	CloseHandle(hImageService);
 	CloseHandle(hInfo);
 	CloseHandle(hloop);
+	CloseHandle(hSservice);
 
 	return 0;
 }

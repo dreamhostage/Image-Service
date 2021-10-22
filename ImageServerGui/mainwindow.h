@@ -54,6 +54,7 @@ private slots:
     void on_pushButton1_clicked();
     void on_pushButton_2_clicked();
     void on_actionText_viewer_triggered();
+    void on_Launchvideostreaming_clicked();
 
 private:
     Ui::MainWindow *ui;
