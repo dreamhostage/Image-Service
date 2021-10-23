@@ -28,16 +28,19 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
         settings.cpp \
+        settingsdescription.cpp \
         tviewer.cpp
 
 HEADERS += \
         mainwindow.h \
         settings.h \
+        settingsdescription.h \
         tviewer.h
 
 FORMS += \
         mainwindow.ui \
         settings.ui \
+        settingsdescription.ui \
         tviewer.ui
 
 RC_FILE = resources.rc

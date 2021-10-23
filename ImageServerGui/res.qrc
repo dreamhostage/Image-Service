@@ -4,5 +4,9 @@
         <file>play.png</file>
         <file>takePhoto.png</file>
         <file>IntervalPhoto.png</file>
+        <file>mainMenuEN.png</file>
+        <file>FileMenuEN.png</file>
+        <file>TextViewer.png</file>
+        <file>SettingsMenu.png</file>
     </qresource>
 </RCC>

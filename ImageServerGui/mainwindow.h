@@ -6,6 +6,7 @@
 #include "ImageServerLib.h"
 #include "tviewer.h"
 #include "ui_tviewer.h"
+#include "settingsdescription.h"
 
 #include <QMediaPlayer>
 #include <QMainWindow>
@@ -32,6 +33,7 @@ class MainWindow : public QMainWindow
 public:
     information info;
     tviewer tv;
+    SettingsDescription sd;
     ImageServer *server;
     HANDLE hnames_monytoring;
     HANDLE honline_monytoring;
@@ -55,6 +57,7 @@ private slots:
     void on_pushButton_2_clicked();
     void on_actionText_viewer_triggered();
     void on_Launchvideostreaming_clicked();
+    void on_actionSettings_information_triggered();
 
 private:
     Ui::MainWindow *ui;

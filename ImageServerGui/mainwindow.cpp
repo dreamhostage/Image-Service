@@ -510,3 +510,8 @@ void MainWindow::on_Launchvideostreaming_clicked()
         }
     }
 }
+
+void MainWindow::on_actionSettings_information_triggered()
+{
+    sd.show();
+}

@@ -80,7 +80,7 @@
      <x>0</x>
      <y>0</y>
      <width>320</width>
-     <height>26</height>
+     <height>17</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuSettings">
@@ -92,6 +92,7 @@
     <addaction name="separator"/>
     <addaction name="actionDelete_all_images"/>
     <addaction name="actionText_viewer"/>
+    <addaction name="actionSettings_information"/>
     <addaction name="actionSettings"/>
    </widget>
    <addaction name="menuSettings"/>
@@ -120,6 +121,11 @@
   <action name="actionText_viewer">
    <property name="text">
     <string>Text viewer</string>
+   </property>
+  </action>
+  <action name="actionSettings_information">
+   <property name="text">
+    <string>Help</string>
    </property>
   </action>
  </widget>
