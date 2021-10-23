@@ -25,8 +25,18 @@ using namespace sf;
 int main(int argc, char* argv[])
 {
     int port = 0;
-    sscanf_s(argv[0], "%d", &port);
+    std::string sPort;
+    std::string username;
+    std::string command = argv[0];
+    int i = 0;
+    while (command[i] != '\n')
+        sPort += argv[0][i++];
+    ++i;
+    while (i < command.size())
+        username += command[i++];
+    sscanf_s(sPort.c_str(), "%d", &port);
     port -= 2;
+
     HWND hWnd = GetConsoleWindow();
     ShowWindow(hWnd, SW_HIDE);
     int bufSize = 0;
@@ -55,7 +65,7 @@ int main(int argc, char* argv[])
     int fromlen = sizeof(*sin);
     SOCKET s = accept(*sMain, (struct sockaddr*)sin, &fromlen);
 
-    RenderWindow window(VideoMode(800, 600), "SFML window");
+    RenderWindow window(VideoMode(800, 600), username);
 
     Texture texture;
 

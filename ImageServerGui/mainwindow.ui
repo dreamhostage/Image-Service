@@ -44,30 +44,30 @@
        <item>
         <widget class="QPushButton" name="pushButton_2">
          <property name="text">
-          <string>Loop Shooting</string>
+          <string/>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="b_GetImage">
          <property name="text">
-          <string>Get Image</string>
+          <string/>
          </property>
         </widget>
        </item>
       </layout>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_3">
+      <widget class="QPushButton" name="Launchvideostreaming">
        <property name="text">
-        <string>Hide in tray</string>
+        <string/>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="Launchvideostreaming">
+      <widget class="QPushButton" name="pushButton_3">
        <property name="text">
-        <string>Launch video streaming</string>
+        <string>Hide in tray</string>
        </property>
       </widget>
      </item>
@@ -80,7 +80,7 @@
      <x>0</x>
      <y>0</y>
      <width>320</width>
-     <height>17</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuSettings">

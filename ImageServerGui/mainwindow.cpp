@@ -41,6 +41,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
     this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
     m.setMedia(QUrl("qrc:/new.mp3"));
+    ui->Launchvideostreaming->setIcon(QIcon(":/play.png"));
+    ui->Launchvideostreaming->setIconSize(QSize(170, 50));
+    ui->b_GetImage->setIcon(QIcon(":/takePhoto.png"));
+    ui->b_GetImage->setIconSize(QSize(35, 35));
+    ui->pushButton_2->setIcon(QIcon(":/IntervalPhoto.png"));
+    ui->pushButton_2->setIconSize(QSize(70, 40));
 }
 
 MainWindow::~MainWindow()
@@ -97,7 +103,7 @@ DWORD WINAPI names_monytoring(PVOID p)
             std::string name = w->info.server->GetLastCon().name;
             QListWidgetItem* listItem = new QListWidgetItem( QString::fromLocal8Bit(&name[0]));
             w->info.ui->listWidget->addItem(listItem);
-            listItem->setTextColor(Qt::black);
+            listItem->setTextColor(Qt::gray);
             if(w->s)
                 if(w->s->ui->checkSound->isChecked())
                     w->m.play();
@@ -315,14 +321,17 @@ DWORD WINAPI tap_monytoring(PVOID p)
 DWORD WINAPI launchVideoStreamer(PVOID p)
 {
     information *info = static_cast<information*>(p);
-    char cPort[6];
-    strcpy_s(cPort, std::to_string(info->server->port).c_str());
+    char cCommand[100];
+    std::string command = std::to_string(info->server->port).c_str();
+    command += "\n";
+    command += info->ui->listWidget->selectedItems().first()->text().toStdString();
+    strcpy_s(cCommand, command.c_str());
     STARTUPINFOA si;
     PROCESS_INFORMATION pi;
     ZeroMemory( &si, sizeof(si) );
     si.cb = sizeof(si);
     ZeroMemory( &pi, sizeof(pi) );
-    CreateProcessA("C:\\Program Files (x86)\\ImageServer\\VideoStreamer.exe", (LPSTR)cPort, NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
+    CreateProcessA("VideoStreamer.exe", cCommand, NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
     WaitForSingleObject( pi.hProcess, INFINITE );
     CloseHandle( pi.hProcess );
     CloseHandle( pi.hThread );
@@ -419,13 +428,13 @@ void MainWindow::on_pushButton_2_clicked()
         listItem->setSelected(false);
         QColor col = listItem->textColor();
 
-        if(col == Qt::black)
+        if(col == Qt::gray)
         {
-            listItem->setTextColor(Qt::gray);
+            listItem->setTextColor(Qt::blue);
         }
         else
         {
-            listItem->setTextColor(Qt::black);
+            listItem->setTextColor(Qt::gray);
         }
 
         if(!hShooting_interval)

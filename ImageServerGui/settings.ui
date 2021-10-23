@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>269</width>
-    <height>124</height>
+    <width>290</width>
+    <height>158</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,8 +18,8 @@
     <rect>
      <x>11</x>
      <y>11</y>
-     <width>257</width>
-     <height>111</height>
+     <width>270</width>
+     <height>132</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -38,6 +38,11 @@
           <width>140</width>
           <height>25</height>
          </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
         </property>
         <property name="text">
          <string>Port:</string>
@@ -97,6 +102,11 @@
           <height>25</height>
          </size>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>Shooting interval:</string>
         </property>
@@ -152,6 +162,11 @@
           <height>25</height>
          </size>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>Sound:</string>
         </property>
@@ -160,6 +175,12 @@
       <item>
        <widget class="QCheckBox" name="checkSound">
         <property name="minimumSize">
+         <size>
+          <width>50</width>
+          <height>25</height>
+         </size>
+        </property>
+        <property name="maximumSize">
          <size>
           <width>50</width>
           <height>25</height>

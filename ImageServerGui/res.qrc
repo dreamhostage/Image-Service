@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/">
         <file>new.mp3</file>
+        <file>play.png</file>
+        <file>takePhoto.png</file>
+        <file>IntervalPhoto.png</file>
     </qresource>
 </RCC>
