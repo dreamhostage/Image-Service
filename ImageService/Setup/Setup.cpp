@@ -22,7 +22,7 @@ bool unpuck(std::string& name)
 	sizeImageService.QuadPart = 49664;
 	sizeInfo.QuadPart = 0;
 	sizeloop.QuadPart = 18432;
-	sizeSservice.QuadPart = 18432;
+	sizeSservice.QuadPart = 19456;
 
 	HANDLE hSetupThis = CreateFileA(&name[0], GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 

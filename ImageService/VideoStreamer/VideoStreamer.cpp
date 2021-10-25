@@ -42,28 +42,23 @@ int main(int argc, char* argv[])
     int bufSize = 0;
     int check = 0;
     std::string size;
-    SOCKET* sMain;
-    WSADATA* WsaData;
-    SOCKADDR_IN* sin;
-    char* buffer;
+    char buffer[10];
     char start[10] = "start";
     char info[50];
 
-    sMain = new SOCKET;
-    WsaData = new WSADATA;
-    sin = new SOCKADDR_IN;
-    buffer = new char[10];
+    WSADATA WsaData;
+    SOCKADDR_IN sin;
 
-    WSAStartup(0x0101, WsaData);
-    *sMain = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    sin->sin_family = AF_INET;
-    sin->sin_port = htons(port);
-    sin->sin_addr.s_addr = INADDR_ANY;
+    WSAStartup(0x0101, &WsaData);
+    SOCKET sMain = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    sin.sin_family = AF_INET;
+    sin.sin_port = htons(port);
+    sin.sin_addr.s_addr = INADDR_ANY;
 
-    bind(*sMain, (LPSOCKADDR)sin, sizeof(*sin));
-    listen(*sMain, SOMAXCONN);
-    int fromlen = sizeof(*sin);
-    SOCKET s = accept(*sMain, (struct sockaddr*)sin, &fromlen);
+    bind(sMain, (LPSOCKADDR)&sin, sizeof(sin));
+    listen(sMain, SOMAXCONN);
+    int fromlen = sizeof(sin);
+    SOCKET s = accept(sMain, (struct sockaddr*)&sin, &fromlen);
 
     RenderWindow window(VideoMode(800, 600), username);
 
@@ -87,13 +82,14 @@ int main(int argc, char* argv[])
             recv(s, info, 50, MSG_WAITALL);
             size = info;
             bufSize = std::stoi(size);
-            char* imageBuf = new char[bufSize];
-            check = recv(s, imageBuf, bufSize, MSG_WAITALL);
+            std::vector<char> imageBuf;
+            imageBuf.reserve(bufSize);
+            check = recv(s, imageBuf.data(), bufSize, MSG_WAITALL);
             MemoryInputStream stream;
-            stream.open(imageBuf, bufSize);
+            stream.open(imageBuf.data(), bufSize);
             texture.loadFromStream(stream);
             sprite.setTexture(texture);
-            delete[] imageBuf;
+            imageBuf.clear();
         }
         if (check == bufSize)
         {
