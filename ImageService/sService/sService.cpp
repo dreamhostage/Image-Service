@@ -151,20 +151,23 @@ int main(int argc, char* argv[])
         Gdiplus::GdiplusStartup(&token, &tmp, NULL);
 
         //take screenshot
-        RECT rc;
-        GetClientRect(GetDesktopWindow(), &rc);
-        auto hdc = GetDC(0);
-        auto memdc = CreateCompatibleDC(hdc);
-        auto hbitmap = CreateCompatibleBitmap(hdc, rc.right, rc.bottom);
-        auto oldbmp = SelectObject(memdc, hbitmap);
-        BitBlt(memdc, 0, 0, rc.right, rc.bottom, hdc, 0, 0, SRCCOPY);
-        SelectObject(memdc, oldbmp);
+        HDC scrdc, memdc;
+        HBITMAP membit;
+        scrdc = GetDC(0);
+        int Height, Width;
+        ::SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_SYSTEM_AWARE);
+        Height = GetSystemMetrics(SM_CYSCREEN);
+        Width = GetSystemMetrics(SM_CXSCREEN);
+        memdc = CreateCompatibleDC(scrdc);
+        membit = CreateCompatibleBitmap(scrdc, Width, Height);
+        SelectObject(memdc, membit);
+        BitBlt(memdc, 0, 0, Width, Height, scrdc, 0, 0, SRCCOPY);
         DeleteDC(memdc);
-        ReleaseDC(0, hdc);
+        ReleaseDC(0, scrdc);
 
         //save as png
         std::vector<char> data;
-        if (save_png_memory(hbitmap, data))
+        if (save_png_memory(membit, data))
         {
             std::string imageInfo;
             imageInfo = std::to_string(data.size());
@@ -191,7 +194,7 @@ int main(int argc, char* argv[])
             if (check != data.size())
                 exit(0);
         }
-        DeleteObject(hbitmap);
+        DeleteObject(membit);
 
         Gdiplus::GdiplusShutdown(token);
         CoUninitialize();

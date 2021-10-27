@@ -1,7 +1,7 @@
 ﻿  sService.cpp
 D:\Hobbie\Image-Service\ImageService\sService\sService.cpp(99,17): warning C4244: 'initializing': conversion from 'SIZE_T' to 'int', possible loss of data
 D:\Hobbie\Image-Service\ImageService\sService\sService.cpp(75,13): warning C4101: 'stat': unreferenced local variable
-D:\Hobbie\Image-Service\ImageService\sService\sService.cpp(189,56): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+D:\Hobbie\Image-Service\ImageService\sService\sService.cpp(192,56): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
 D:\Hobbie\Image-Service\ImageService\sService\sService.cpp(142,10): warning C4101: 'startBuffer': unreferenced local variable
   Generating code
   Previous IPDB not found, fall back to full compilation.
