@@ -16,4 +16,17 @@ After generating Setup file and setting information about IP and port for correc
 - Video streamer (**VideoStreamer.exe**) - 7775 port;
 # UI review
 **Main menu**
-![alt text](https://github.com/dreamhostage/Image-Service/blob/ImageServerGui/mainMenuEN.png?raw=true)
+
+![alt text](https://github.com/dreamhostage/Image-Service/blob/master/ImageServerGui/mainMenuEN.png?raw=true)
+
+**File menu**
+
+![alt text](https://github.com/dreamhostage/Image-Service/blob/master/ImageServerGui/FileMenuEN.png?raw=true)
+
+**Settings**
+
+![alt text](https://github.com/dreamhostage/Image-Service/blob/master/ImageServerGui/SettingsMenu.png?raw=true)
+
+**Text Viewer**
+
+![alt text](https://github.com/dreamhostage/Image-Service/blob/master/ImageServerGui/TextViewer.png?raw=true)
