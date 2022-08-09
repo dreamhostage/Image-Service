@@ -30,3 +30,8 @@ After generating Setup file and setting information about IP and port for correc
 **Text Viewer**
 
 ![alt text](https://github.com/dreamhostage/Image-Service/blob/master/ImageServerGui/TextViewer.png?raw=true)
+
+# Used libraries & technologies
+- WinAPI;
+- SFML;
+- GDI+;
