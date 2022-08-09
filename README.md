@@ -14,3 +14,6 @@ After generating Setup file and setting information about IP and port for correc
 - Screenshots getter (**loop.exe**)      - 7777 port;
 - Buttons reader (**bReader.exe**)       - 7776 port;
 - Video streamer (**VideoStreamer.exe**) - 7775 port;
+# UI review
+**Main menu**
+![alt text](https://github.com/dreamhostage/Image-Service/blob/ImageServerGui/mainMenuEN.png?raw=true)
